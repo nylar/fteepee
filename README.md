@@ -2,7 +2,7 @@
 
 Sans IO FTP client.
 
-[![CI](https://github.com/nylar/fteepee/actions/workflows/ci.yaml/badge.svg)](https://github.com/nylar/fteepee/actions/workflows/ci.yaml)
+[![CI](https://github.com/nylar/fteepee/actions/workflows/ci.yml/badge.svg)](https://github.com/nylar/fteepee/actions/workflows/ci.yml)
 
 ## License
 
