@@ -1,0 +1,9 @@
+[workspace]
+members = [
+  "fteepee-core",
+  "fteepee-sync",
+  "fteepee-tokio",
+
+  # Internal
+  "examples",
+]
