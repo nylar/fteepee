@@ -190,7 +190,7 @@ mod tests {
         let resp =
             parse_response(include_bytes!("../testdata/feat_command_input"), &mut buf).unwrap();
 
-        assert_eq!(resp.code().unwrap(), Code::STATUS);
+        assert_eq!(resp.code().unwrap(), Code::SYSTEM_STATUS);
         assert_eq!(
             resp.message(&buf),
             stripped(include_bytes!("../testdata/feat_command_output"))
