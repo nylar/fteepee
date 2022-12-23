@@ -40,6 +40,9 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Run docker compose
+        run: docker-compose -f docker-compose.yml up -d
+
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
