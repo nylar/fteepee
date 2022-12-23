@@ -2,13 +2,13 @@ use std::{error, fmt, marker::PhantomData, net::SocketAddr};
 
 use bytes::BytesMut;
 use fteepee_core::{
-    commands::{Command, Feat, List, Mlsd, Pass, Pasv, User},
+    commands::{Command, Feat, List, Mlsd, Pass, Pasv, Stor, Type, User},
     expect_code,
     response::{ParsedResponseState, Response, ResponseExt},
     Code, Config, Connected, Disconnected,
 };
 use tokio::{
-    io::{AsyncBufRead, AsyncBufReadExt, AsyncWriteExt, BufReader},
+    io::{AsyncBufRead, AsyncBufReadExt, AsyncRead, AsyncWriteExt, BufReader, BufWriter},
     net::{TcpStream, ToSocketAddrs},
 };
 
@@ -95,6 +95,40 @@ impl Client<Connected> {
 
             dbg!(String::from_utf8_lossy(line));
         }
+
+        let resp = self.read_response().await?;
+        expect_code!(
+            resp.code()?,
+            Code::CLOSING_DATA_CONNECTION | Code::REQUESTED_FILE_ACTION_OKAY,
+        );
+
+        Ok(())
+    }
+
+    pub async fn put<R: AsyncRead + Unpin + ?Sized>(
+        &mut self,
+        path: &str,
+        reader: &mut R,
+    ) -> Result<()> {
+        let cmd = Type::Image;
+
+        self.write_request(&cmd).await?;
+        let resp = self.read_response().await?;
+        expect_code!(resp.code()?, Code::COMMAND_OKAY);
+
+        let cmd = Stor::new(path);
+        let mut stream = BufWriter::new(self.data_connection(&cmd).await?);
+
+        let resp = self.read_response().await?;
+        expect_code!(
+            resp.code()?,
+            Code::DATA_CONNECTION_ALREADY_OPEN | Code::OPENING_DATA_CONNECTION
+        );
+
+        tokio::io::copy(reader, &mut stream).await?;
+
+        // We are done with this connection
+        drop(stream);
 
         let resp = self.read_response().await?;
         expect_code!(

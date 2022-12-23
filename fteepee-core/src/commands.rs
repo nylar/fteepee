@@ -67,6 +67,7 @@ impl_commands! {
     (Pasv, b"PASV");
     (Syst, b"SYST");
     (Feat, b"FEAT");
+    (Stor<'_>, b"STOR", path);
 }
 
 impl Command for Type {
@@ -139,3 +140,13 @@ pub struct Syst;
 
 #[derive(Default)]
 pub struct Feat;
+
+pub struct Stor<'a> {
+    path: &'a str,
+}
+
+impl<'a> Stor<'a> {
+    pub fn new(path: &'a str) -> Self {
+        Self { path }
+    }
+}

@@ -45,6 +45,8 @@ impl_codes! {
     /// 150 - File status okay; about to open data connection.
     (150, OPENING_DATA_CONNECTION);
 
+    /// 200 - Command okay
+    (200, COMMAND_OKAY);
     /// 211 - System status, or system help reply.
     (211, STATUS);
     /// 220 - Service ready for new user.
