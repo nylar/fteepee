@@ -44,10 +44,10 @@ impl Client<Disconnected> {
         let resp = client.read_response().await?;
         expect_code!(
             resp.code()?,
-            Code::STATUS | Code::UNRECOGNIZED_COMMAND | Code::NOT_IMPLEMENTED
+            Code::SYSTEM_STATUS | Code::UNRECOGNIZED_COMMAND | Code::NOT_IMPLEMENTED
         );
 
-        if matches!(resp.code()?, Code::STATUS) {
+        if matches!(resp.code()?, Code::SYSTEM_STATUS) {
             let features = fteepee_core::parse_features(&client.response_buffer);
 
             if features.get("MLST").is_some() {
