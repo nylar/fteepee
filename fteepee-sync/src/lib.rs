@@ -12,6 +12,7 @@ use fteepee_core::{
     response::{ParsedResponseState, Response, ResponseExt},
     Code, Config, Connected, Disconnected,
 };
+use log::{log_enabled, trace};
 
 pub struct Client<State = Disconnected> {
     stream: Lines<BufReader<TcpStream>>,
@@ -176,6 +177,13 @@ impl Client<Connected> {
             }
         }
 
+        if log_enabled!(log::Level::Trace) {
+            trace!(
+                "<-- {}",
+                String::from_utf8_lossy(parsed_response.message(&self.response_buffer))
+            );
+        }
+
         Ok(parsed_response)
     }
 
@@ -190,6 +198,13 @@ impl Client<Connected> {
             .reader
             .get_mut()
             .write_all(&self.write_buffer[..cmd.size()])?;
+
+        if log_enabled!(log::Level::Trace) {
+            trace!(
+                "--> {}",
+                String::from_utf8_lossy(&self.write_buffer[..cmd.size()])
+            );
+        }
 
         Ok(())
     }

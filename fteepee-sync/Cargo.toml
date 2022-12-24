@@ -7,3 +7,4 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 bytes = { version = "1", default-features = false }
 fteepee-core = { path = "../fteepee-core", features = ["std"] }
+log = "0.4"

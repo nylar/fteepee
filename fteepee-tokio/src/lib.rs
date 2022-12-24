@@ -11,6 +11,7 @@ use tokio::{
     io::{AsyncBufRead, AsyncBufReadExt, AsyncRead, AsyncWriteExt, BufReader, BufWriter},
     net::{TcpStream, ToSocketAddrs},
 };
+use tracing::{enabled, trace};
 
 pub struct Client<State = Disconnected> {
     stream: Lines<BufReader<TcpStream>>,
@@ -178,6 +179,13 @@ impl Client<Connected> {
             }
         }
 
+        if enabled!(tracing::Level::TRACE) {
+            trace!(
+                "<-- {}",
+                String::from_utf8_lossy(parsed_response.message(&self.response_buffer))
+            );
+        }
+
         Ok(parsed_response)
     }
 
@@ -193,6 +201,13 @@ impl Client<Connected> {
             .get_mut()
             .write_all(&self.write_buffer[..cmd.size()])
             .await?;
+
+        if enabled!(tracing::Level::TRACE) {
+            trace!(
+                "--> {}",
+                String::from_utf8_lossy(&self.write_buffer[..cmd.size()])
+            );
+        }
 
         Ok(())
     }

@@ -8,3 +8,4 @@ license = "MIT OR Apache-2.0"
 bytes = { version = "1", default-features = false }
 fteepee-core = { path = "../fteepee-core", features = ["std"] }
 tokio = { version = "1", features = ["io-util", "net"] }
+tracing = { version = "0.1.37", default-features = false, features = ["std", "log"] }
