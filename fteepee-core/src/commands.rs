@@ -1,7 +1,7 @@
 const TELNET_END_OF_LINE: &[u8] = b"\r\n";
 const CMD: usize = 4;
 const SPACE: usize = 1;
-const EOL: usize = 2;
+const EOL: usize = TELNET_END_OF_LINE.len();
 
 fn write(buf: &mut [u8], data: &[u8], n: usize) -> usize {
     buf[n..n + data.len()].copy_from_slice(data);
