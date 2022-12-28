@@ -48,17 +48,6 @@ pub enum Type {
     Local,
 }
 
-// impl Type {
-//     const fn as_bytes(&self) -> &[u8] {
-//         match *self {
-//             Type::ASCII => b"A",
-//             Type::EBCDIC => b"E",
-//             Type::Image => b"I",
-//             Type::Local => b"L",
-//         }
-//     }
-// }
-
 impl_commands! {
     (User<'_>, b"USER", user);
     (Pass<'_>, b"PASS", pass);
@@ -148,5 +137,43 @@ pub struct Stor<'a> {
 impl<'a> Stor<'a> {
     pub fn new(path: &'a str) -> Self {
         Self { path }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn enum_command() {
+        let mut output: [u8; 64] = [0; 64];
+
+        let cmd = Type::ASCII;
+
+        cmd.encode(&mut output);
+
+        assert_eq!(output[..cmd.size()], b"TYPE A\r\n"[..]);
+    }
+
+    #[test]
+    fn empty_struct_command() {
+        let mut output: [u8; 64] = [0; 64];
+
+        let cmd = Pasv::default();
+
+        cmd.encode(&mut output);
+
+        assert_eq!(output[..cmd.size()], b"PASV\r\n"[..]);
+    }
+
+    #[test]
+    fn one_field_struct_command() {
+        let mut output: [u8; 64] = [0; 64];
+
+        let cmd = User::new("foo");
+
+        cmd.encode(&mut output);
+
+        assert_eq!(output[..cmd.size()], b"USER foo\r\n"[..]);
     }
 }
