@@ -105,4 +105,10 @@ mod tests {
 
         assert_eq!(expected, feats);
     }
+
+    #[test]
+    #[should_panic(expected = "Invalid UTF-8")]
+    fn test_invalid_utf8() {
+        super::parse_features(b" \xfe \xff");
+    }
 }
