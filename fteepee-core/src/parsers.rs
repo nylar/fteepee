@@ -14,28 +14,27 @@ use crate::Result;
 pub fn parse_features(buf: &[u8]) -> std::collections::HashMap<&str, Option<&str>> {
     let lines = buf.split(|byte| *byte == b'\n');
 
-    unsafe {
-        lines
-            .filter_map(|line| match line {
-                [b' ', rest @ ..] => Some(rest),
-                _ => None,
-            })
-            .filter_map(|line| {
-                let mut group = line.splitn(2, |byte| *byte == b' ');
+    lines
+        .filter_map(|line| match line {
+            [b' ', rest @ ..] => Some(rest),
+            _ => None,
+        })
+        .filter_map(|line| {
+            let mut group = line.splitn(2, |byte| *byte == b' ');
 
-                match (group.next(), group.next()) {
-                    (Some(feature), Some(details)) => Some((
-                        std::str::from_utf8_unchecked(feature).trim(),
-                        Some(std::str::from_utf8_unchecked(details).trim()),
-                    )),
-                    (Some(feature), None) => {
-                        Some((std::str::from_utf8_unchecked(feature).trim(), None))
-                    }
-                    _ => None,
-                }
-            })
-            .collect::<std::collections::HashMap<_, _>>()
-    }
+            match (group.next(), group.next()) {
+                (Some(feature), Some(details)) => Some((
+                    std::str::from_utf8(feature).expect("Invalid UTF-8").trim(),
+                    Some(std::str::from_utf8(details).expect("Invalid UTF-8").trim()),
+                )),
+                (Some(feature), None) => Some((
+                    std::str::from_utf8(feature).expect("Invalid UTF-8").trim(),
+                    None,
+                )),
+                _ => None,
+            }
+        })
+        .collect::<std::collections::HashMap<_, _>>()
 }
 
 pub fn parse_passive_mode(buf: &[u8]) -> Result<Addr> {
