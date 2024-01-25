@@ -40,7 +40,7 @@ impl Client<Disconnected> {
         let resp = client.read_response().await?;
         expect_code!(resp.code()?, Code::READY);
 
-        let cmd = Feat::default();
+        let cmd = Feat;
         client.write_request(&cmd).await?;
         let resp = client.read_response().await?;
         expect_code!(
@@ -151,7 +151,7 @@ impl Client<Connected> {
     }
 
     async fn pasv(&mut self) -> Result<SocketAddr> {
-        let cmd = Pasv::default();
+        let cmd = Pasv;
 
         self.write_request(&cmd).await?;
         let mut resp = self.read_response().await?;

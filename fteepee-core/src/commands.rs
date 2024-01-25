@@ -159,7 +159,7 @@ mod tests {
     fn empty_struct_command() {
         let mut output: [u8; 64] = [0; 64];
 
-        let cmd = Pasv::default();
+        let cmd = Pasv;
 
         cmd.encode(&mut output);
 
